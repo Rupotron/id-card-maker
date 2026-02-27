@@ -1,45 +1,45 @@
-const canvas = document.getElementById('idCanvas');
-const ctx = canvas.getContext('2d');
+function generateID() {
+    // Populate Data
+    document.getElementById('displayName').innerText = document.getElementById('inName').value;
+    document.getElementById('displayRole').innerText = document.getElementById('inRole').value;
+    document.getElementById('displayID').innerText = document.getElementById('inID').value;
 
-function generateCard() {
-    const name = document.getElementById('name').value;
-    const role = document.getElementById('role').value;
-    const imageInput = document.getElementById('imageInput');
+    // Generate QR Code containing Employee Name and ID
+    const qrContainer = document.getElementById("qrcode");
+    qrContainer.innerHTML = "";
+    new QRCode(qrContainer, {
+        text: "Emp: " + document.getElementById('inName').value + " ID: " + document.getElementById('inID').value,
+        width: 130,
+        height: 130
+    });
 
-    // Background
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    // Handle Photo Upload
+    const photoInput = document.getElementById('inPhoto');
+    const reader = new FileReader();
     
-    // Header Bar
-    ctx.fillStyle = "#1a73e8";
-    ctx.fillRect(0, 0, canvas.width, 60);
+    reader.onload = function(e) {
+        document.getElementById('displayPhoto').src = e.target.result;
+        
+        // Finalize PDF
+        const element = document.getElementById('id-template');
+        element.classList.remove('hidden-print');
+        
+        const opt = {
+            margin: 0,
+            filename: 'Astavinayak_ID_Card.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 3 },
+            jsPDF: { unit: 'px', format: [400, 600], orientation: 'portrait' }
+        };
 
-    // Text Styling
-    ctx.fillStyle = "#000";
-    ctx.font = "bold 20px Arial";
-    ctx.fillText(name.toUpperCase(), 150, 120);
-    
-    ctx.font = "16px Arial";
-    ctx.fillStyle = "#555";
-    ctx.fillText(role, 150, 150);
+        html2pdf().set(opt).from(element).save().then(() => {
+            element.classList.add('hidden-print');
+        });
+    };
 
-    // Image Upload Handling
-    if (imageInput.files && imageInput.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(event) {
-            const img = new Image();
-            img.onload = function() {
-                ctx.drawImage(img, 20, 80, 100, 100);
-            }
-            img.src = event.target.result;
-        }
-        reader.readAsDataURL(imageInput.files[0]);
+    if (photoInput.files[0]) {
+        reader.readAsDataURL(photoInput.files[0]);
+    } else {
+        alert("Please upload a photo first!");
     }
-}
-
-function downloadCard() {
-    const link = document.createElement('a');
-    link.download = 'id-card.png';
-    link.href = canvas.toDataURL();
-    link.click();
 }

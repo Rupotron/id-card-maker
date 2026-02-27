@@ -2,21 +2,59 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>ID Card Generator</title>
+    <title>Astavinayak ID Card Maker</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
-    <div class="container">
-        <h2>ID Card Maker</h2>
-        <div class="controls">
-            <input type="text" id="name" placeholder="Full Name">
-            <input type="text" id="role" placeholder="Designation">
-            <input type="file" id="imageInput" accept="image/*">
-            <button onclick="generateCard()">Generate & Preview</button>
-            <button onclick="downloadCard()">Download PNG</button>
-        </div>
-        <canvas id="idCanvas" width="400" height="250"></canvas>
+
+    <div class="input-panel">
+        <h2>ID Card Generator</h2>
+        <input type="text" id="inName" placeholder="Full Name (e.g. MR. AJAY MONDAL)">
+        <input type="text" id="inRole" placeholder="Designation (e.g. IT Head.)">
+        <input type="text" id="inID" placeholder="ID Number (e.g. AGC-5038-05)">
+        <input type="file" id="inPhoto" accept="image/*">
+        <button onclick="generateID()">Generate & Download PDF</button>
     </div>
+
+    <div id="id-template" class="hidden-print">
+        <div class="card front">
+            <div class="maroon-top"></div>
+            <div class="black-stripe-top"></div>
+            <img src="logo.png" class="logo-main"> <div class="photo-box">
+                <img id="displayPhoto" src="">
+            </div>
+            <div class="user-details">
+                <h1 id="displayName">NAME</h1>
+                <h3 id="displayRole">DESIGNATION</h3>
+                <div class="id-banner">
+                    ID Number: <span id="displayID">AGC-0000-00</span>
+                </div>
+                <p>Card Issue Date: October 2025</p>
+                <p>Card Expire Date: September 2027</p>
+            </div>
+            <div class="black-stripe-bottom"></div>
+        </div>
+
+        <div class="card back">
+            <div class="contact-info">
+                <p>Urbana NRI Complex, Tower-5, Flat No-2004, 783, Anandapur Road, Madhurdaha, Kolkata-700107, West Bengal, India.a</p>
+                <p>astavinayakgroup2016@gmail.com</p>
+                <p>7003426866 / 9830430866.</p>
+                <p>www.astavinayakgroups.com</p>
+            </div>
+            <div class="terms-header">Terms & Conditions</div>
+            <div class="terms-content">
+                <p>1. The card is for Company purposes only. Any misuse can result in cancellation of the card and potential blacklisting of the Office outlet.</p>
+                <p>2. The Cards are generally valid for a limited time, such as one or two years, and must be renewed.</p>
+                <p>3. The card is the property of the issuing authority Astavinayak Group Of Company Ltd.</p>
+            </div>
+            <div id="qrcode"></div>
+            <img src="logo.png" class="logo-footer">
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
