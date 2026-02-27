@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ID Card Generator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>ID Card Maker</h2>
+        <div class="controls">
+            <input type="text" id="name" placeholder="Full Name">
+            <input type="text" id="role" placeholder="Designation">
+            <input type="file" id="imageInput" accept="image/*">
+            <button onclick="generateCard()">Generate & Preview</button>
+            <button onclick="downloadCard()">Download PNG</button>
+        </div>
+        <canvas id="idCanvas" width="400" height="250"></canvas>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
