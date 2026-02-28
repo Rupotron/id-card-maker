@@ -1,61 +1,55 @@
 async function generateID() {
     const name = document.getElementById('inName').value;
+    const role = document.getElementById('inRole').value;
     const idNum = document.getElementById('inID').value;
     const photoInput = document.getElementById('inPhoto');
 
-    if (!name || !idNum || !photoInput.files[0]) {
-        alert("Please fill in all fields and upload a photo.");
+    if (!name || !photoInput.files[0]) {
+        alert("Please provide a name and photo.");
         return;
     }
 
-    // 1. Update Text
+    // 1. Update text content
     document.getElementById('displayName').innerText = name;
-    document.getElementById('displayRole').innerText = document.getElementById('inRole').value;
-    document.getElementById('displayID').innerText = idNum;
+    document.getElementById('displayRole').innerText = role || "Designation";
+    document.getElementById('displayID').innerText = idNum || "AGC-0000-00";
 
     // 2. Generate QR Code
     const qrContainer = document.getElementById("qrcode");
     qrContainer.innerHTML = "";
     new QRCode(qrContainer, {
-        text: `Employee: ${name} | ID: ${idNum}`,
-        width: 130,
-        height: 130,
-        correctLevel: QRCode.CorrectLevel.H
+        text: `ID:${idNum} | Name:${name}`,
+        width: 120,
+        height: 120
     });
 
-    // 3. Handle Photo and Trigger PDF
+    // 3. Process Photo and Download
     const reader = new FileReader();
     reader.onload = function(e) {
-        const photoImg = document.getElementById('displayPhoto');
-        photoImg.src = e.target.result;
+        const displayPhoto = document.getElementById('displayPhoto');
+        displayPhoto.src = e.target.result;
 
-        // Wait for photo to load visually before capturing
-        photoImg.onload = function() {
+        // Ensure image is loaded before PDF capture
+        displayPhoto.onload = function() {
             const element = document.getElementById('id-template');
             element.classList.remove('hidden-print');
 
             const opt = {
                 margin: 0,
                 filename: `ID_Card_${name.replace(/\s+/g, '_')}.pdf`,
-                image: { type: 'jpeg', quality: 1.0 },
+                image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { 
                     scale: 3, 
-                    useCORS: true, // Crucial for loading images/logos
-                    logging: true 
+                    useCORS: true,
+                    logging: false 
                 },
                 jsPDF: { unit: 'px', format: [400, 600], orientation: 'portrait' }
             };
 
-            // Generate the PDF
-            html2pdf().set(opt).from(element).save()
-                .then(() => {
-                    element.classList.add('hidden-print');
-                    console.log("Download successful");
-                })
-                .catch(err => {
-                    console.error("PDF Error:", err);
-                    alert("Failed to generate PDF. Check console for details.");
-                });
+            // Use the promise-based save to ensure completion
+            html2pdf().set(opt).from(element).save().then(() => {
+                element.classList.add('hidden-print');
+            });
         };
     };
     reader.readAsDataURL(photoInput.files[0]);
